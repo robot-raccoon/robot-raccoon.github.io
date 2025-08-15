@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8"/>
 <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no"/>
-<title>Huckey’s Adventure — v13b++</title>
+<title>Huckey’s Adventure — v13b (mobile controls)</title>
 <style>
   html,body{margin:0;height:100%;background:#f3f6fb;font-family:system-ui,-apple-system,Segoe UI,Roboto,Helvetica,Arial,sans-serif;touch-action:manipulation;-webkit-user-select:none;user-select:none;-webkit-tap-highlight-color:transparent}
   #container{position:relative;width:100vw;height:100dvh;overflow:hidden;background:linear-gradient(#cfe7ff,#f6f7fb)}
@@ -13,21 +13,15 @@
   .hudRight{position:absolute;right:14px;top:10px;display:flex;gap:8px;align-items:center}
   .score{font-size:18px;padding-left:6px}
   .mult{font-size:14px;padding:2px 6px;border-radius:8px;background:rgba(255,255,255,.7);border:1px solid #d9e4ff}
-  .mult.star{box-shadow:0 0 10px rgba(255,215,0,.6)}
   .hearts{display:grid;grid-auto-flow:column;grid-gap:6px}
   .heartSlot{width:26px;height:24px;position:relative}
   .heartFull,.heartEmpty{width:100%;height:100%;display:block}
   .heartEmpty{opacity:.55}
-  .heartPop{position:absolute;left:0;top:0;width:100%;height:100%;pointer-events:none;animation:heartPop .65s ease-out forwards}
-  @keyframes heartPop{0%{transform:translateY(0) scale(1);opacity:1}40%{transform:translateY(-6px) scale(1.25);opacity:1}100%{transform:translateY(-22px) scale(.65);opacity:0}}
-  .titleCard,.gameOverCard{position:absolute;left:50%;top:50%;transform:translate(-50%,-50%);background:rgba(255,255,255,.94);border-radius:16px;padding:18px 22px;box-shadow:0 8px 24px rgba(0,0,0,.15);text-align:center;pointer-events:auto;max-width:min(92vw,720px)}
-  .titleCard h1{margin:0 0 10px 0;font-size:clamp(36px,6vw,64px);color:#ff4f93;line-height:1.05;text-shadow:0 2px 0 rgba(255,255,255,.7)}
-  .titleCard .subtitle{margin:0 0 8px 0;color:#4f69a8;font-weight:700}
-  .instructions{margin-top:10px;text-align:left;background:#fff;border:1px solid #cfe1ff;border-radius:12px;padding:12px}
-  .iRow{display:flex;flex-wrap:wrap;gap:10px;margin:6px 0}
-  .iBadge{background:#f4f7ff;border:1px solid #d9e4ff;border-radius:999px;padding:4px 8px;font-weight:700;font-size:13px;display:inline-flex;align-items:center;gap:6px}
-  .iEm{font-weight:800;color:#4f6aa8}
-  .btn{display:inline-block;margin-top:12px;padding:10px 16px;background:#4f8bff;color:#fff;border-radius:10px;font-weight:700;cursor:pointer;border:none;pointer-events:auto}
+  .titleCard,.gameOverCard{position:absolute;left:50%;top:50%;transform:translate(-50%,-50%);background:rgba(255,255,255,.95);border-radius:16px;padding:16px 18px;box-shadow:0 8px 24px rgba(0,0,0,.15);text-align:center;pointer-events:auto;max-width:min(92vw,720px)}
+  .titleCard h1{margin:0 0 6px 0;font-size:clamp(30px,5.5vw,56px);color:#ff4f93;line-height:1.05}
+  .miniInstr{margin:6px auto 8px auto;font-size:13px;color:#4f69a8;background:#fff;border:1px solid #cfe1ff;border-radius:10px;padding:8px;max-width:720px;text-align:left}
+  .miniInstr p{margin:6px 0}
+  .btn{display:inline-block;margin-top:6px;padding:10px 16px;background:#4f8bff;color:#fff;border-radius:10px;font-weight:700;cursor:pointer;border:none;pointer-events:auto}
   .btn:active{transform:translateY(1px)}
   .settingsBtn{position:absolute;top:10px;left:50%;transform:translateX(-50%);pointer-events:auto;background:#fff;border:1px solid #cfe1ff;border-radius:999px;padding:6px 10px;font-weight:700;box-shadow:0 4px 12px rgba(0,0,0,.08);cursor:pointer}
   .settingsPanel{position:absolute;top:42px;left:50%;transform:translateX(-50%);pointer-events:auto;background:rgba(255,255,255,.96);border:1px solid #cfe1ff;border-radius:12px;padding:10px 12px;box-shadow:0 8px 20px rgba(0,0,0,.12);font-size:14px;display:none;min-width:300px}
@@ -46,7 +40,7 @@
   <canvas id="game"></canvas>
   <div class="ui">
     <div class="hudLeft"><div class="score" id="score">0</div><div class="mult" id="mult">×1</div></div>
-    <div class="hudRight"><div class="hearts" id="hearts"></div></div>
+    <div class="hudRight"><!-- hearts hidden in v13b base (lives shown differently); kept placeholder for layout --></div>
     <button class="settingsBtn" id="settingsBtn">⚙︎ Settings / Pause</button>
     <div class="settingsPanel" id="settingsPanel">
       <div class="settingsRow"><label>Music</label><input type="checkbox" id="musicToggle" class="toggle" checked/></div>
@@ -54,16 +48,15 @@
       <div class="settingsRow"><label>Show +points</label><input type="checkbox" id="pointsToggle" class="toggle" checked/></div>
       <div class="settingsRow"><label>Left/Right swap (mobile)</label><input type="checkbox" id="lrToggle" class="toggle"/></div>
       <div class="settingsRow"><label>Haptics (mobile)</label><input type="checkbox" id="hapticToggle" class="toggle"/></div>
-      <div style="font-size:12px;opacity:.8;margin-top:6px">Tap right to hop • Hold left to slide</div>
+      <div style="font-size:12px;opacity:.8;margin-top:6px">Mobile: Tap right = jump • Hold left = slide</div>
+      <div style="font-size:12px;opacity:.8;">Desktop: Up/W jump • Down/S hold to slide</div>
     </div>
     <div class="titleCard" id="title">
       <h1>Huckey’s Adventure</h1>
-      <div class="subtitle">🐰 v13b++ • Endless runner • Bunny City</div>
-      <div class="instructions">
-        <div class="iRow"><span class="iBadge">🖥️ <span class="iEm">Desktop</span>: Up/W = Hop (twice = double), Down/S = Slide (hold)</span></div>
-        <div class="iRow"><span class="iBadge">📱 <span class="iEm">Mobile</span>: Tap Right = Hop (double-tap = double), Hold Left = Slide</span></div>
-        <div class="iRow"><span class="iBadge">🥕 Carrots</span><span class="iBadge">⭐ 10s Invincible + ×8 points</span><span class="iBadge">❤️ +1 Heart (max 3)</span></div>
-        <div class="iRow"><span class="iBadge">⚠️ Leap small stuff • Slide under beams & billboard frames (too tall to hop!)</span></div>
+      <div class="miniInstr">
+        <p>🖥️ Up/W = jump (twice = double) • Down/S = hold to slide</p>
+        <p>📱 Tap right = jump (double-tap = double) • Hold left = slide</p>
+        <p>🥕 Collect carrots & ⭐ stars • Slide under low beams</p>
       </div>
       <button class="btn" id="startBtn">Start</button>
     </div>
@@ -82,7 +75,7 @@
   function resize(){ canvas.width=innerWidth; canvas.height=innerHeight; } addEventListener('resize',resize); resize();
 
   // UI
-  const heartsEl=document.getElementById('hearts'), scoreEl=document.getElementById('score'), multEl=document.getElementById('mult');
+  const scoreEl=document.getElementById('score'), multEl=document.getElementById('mult');
   const titleCard=document.getElementById('title'), startBtn=document.getElementById('startBtn');
   const gameOverCard=document.getElementById('gameOver'), finalScoreEl=document.getElementById('finalScore'), restartBtn=document.getElementById('restartBtn');
   const settingsBtn=document.getElementById('settingsBtn'), settingsPanel=document.getElementById('settingsPanel');
@@ -102,7 +95,6 @@
   const sfx={ jump:()=>envPlay('sine',350,1000,160,.10),
               slide:()=>envPlay('sawtooth',800,200,200,.08),
               hit:()=>{ envPlay('square',220,100,200,.12); },
-              heart:()=>envPlay('triangle',600,900,180,.12),
               star:()=>envPlay('sine',700,1600,160,.12) };
 
   // Haptics
@@ -114,23 +106,18 @@
   const STAR_CHANCE=0.06, STAR_DURATION=10000, DMG_INV=1200;
   const STAND_H=100, SLIDE_H=Math.floor(STAND_H*0.62);
 
-  // Heart spawn timing
-  let nextHeartAt = null; // seconds
-  function scheduleHeart(now){ nextHeartAt = now + (45 + Math.random()*15); } // 45–60s
-  function cooldownHeart(now){ nextHeartAt = now + (20 + Math.random()*10); } // 20–30s
-
   // State
   let gameState='title', transitioning=false;
   let last=0, elapsed=0, worldSpeed=BASE_SPEED, spawnTimer=0, spawnInterval=SPAWN_BASE, score=0;
-  const obstacles=[], carrotItems=[], stars=[], hearts=[], floatTexts=[];
+  const obstacles=[], carrotItems=[], stars=[], floatTexts=[];
 
   // Player
-  const player={ x:()=>canvas.width*.2, y:0, vy:0, width:72, height:STAND_H, onGround:false, dJumps:MAX_DOUBLE, hearts:3,
+  const player={ x:()=>canvas.width*.2, y:0, vy:0, width:72, height:STAND_H, onGround:false, dJumps:MAX_DOUBLE,
                  starUntil:0, dmgInvUntil:0, slideHeld:false, sliding:false, prevSliding:false, fainting:false, faintT:0, runPhase:0 };
   function groundY(){ return Math.floor(canvas.height*.78); }
   let carrotStreak=0; function baseMult(){ return Math.min(5,1+Math.floor(carrotStreak/5)); }
-  function currentMult(){ const m=baseMult(); return (performance.now()<player.starUntil)? Math.min(8,m*2): m; } // ×8 cap during star
-  function updateMultUI(){ multEl.textContent='×'+currentMult(); if(performance.now()<player.starUntil) multEl.classList.add('star'); else multEl.classList.remove('star'); }
+  function currentMult(){ return baseMult(); } // no star multiplier change in v13b revert
+  function updateMultUI(){ multEl.textContent='×'+currentMult(); }
 
   // Pause/settings
   function openSettings(){ if(gameState!=='running'||transitioning) return; settingsPanel.style.display='block'; setPause(true); }
@@ -144,36 +131,22 @@
   });
   addEventListener('keyup',e=>{ if(e.key==='ArrowDown'||e.key==='s'||e.key==='k'||e.key==='K') player.slideHeld=false; });
 
-  // Invisible mobile tap zones
+  // Invisible mobile tap zones (no on-screen buttons)
   function touchSide(t){ return (lrToggle.checked? -1:1) * (t.clientX - innerWidth/2) >= 0 ? 'right':'left'; }
-  function onTouchStart(ev){ if(gameState!=='running'||transitioning) return; const t=(ev.changedTouches?ev.changedTouches[0]:ev); const side=touchSide(t);
-    if(side==='right'){ jump(); }
-    else{ player.slideHeld=true; sfx.slide(); vibrate(10); }
-    ev.preventDefault();
-  }
-  function onTouchEnd(ev){ if(gameState!=='running'||transitioning) return; const t=(ev.changedTouches?ev.changedTouches[0]:ev); const side=touchSide(t);
-    if(side==='left'){ player.slideHeld=false; } ev.preventDefault();
-  }
+  function onTouchStart(ev){ if(gameState!=='running'||transitioning) return; const t=(ev.changedTouches?ev.changedTouches[0]:ev);
+    const side=touchSide(t); if(side==='right'){ jump(); } else { player.slideHeld=true; sfx.slide(); vibrate(10); } ev.preventDefault(); }
+  function onTouchEnd(ev){ if(gameState!=='running'||transitioning) return; const t=(ev.changedTouches?ev.changedTouches[0]:ev);
+    const side=touchSide(t); if(side==='left'){ player.slideHeld=false; } ev.preventDefault(); }
   canvas.addEventListener('touchstart',onTouchStart,{passive:false}); canvas.addEventListener('touchend',onTouchEnd,{passive:false});
   canvas.addEventListener('mousedown',onTouchStart); canvas.addEventListener('mouseup',onTouchEnd);
 
-  // Hearts HUD
-  function heartSVG(full=true){
-    if(full) return `<svg class="heartFull" viewBox="0 0 64 60" xmlns="http://www.w3.org/2000/svg"><defs><linearGradient id="g" x1="0" x2="0" y1="0" y2="1"><stop offset="0%" stop-color="#ff6aa5"/><stop offset="100%" stop-color="#ff3d88"/></linearGradient></defs><path d="M32 56 C 12 40, 4 30, 4 20 C 4 10, 12 4, 20 4 C 26 4, 30 7, 32 11 C 34 7, 38 4, 44 4 C 52 4, 60 10, 60 20 C 60 30, 52 40, 32 56 Z" fill="url(#g)" stroke="#c22668" stroke-width="3"/><path d="M22 12 C 18 10, 14 12, 13 16" fill="none" stroke="rgba(255,255,255,.7)" stroke-width="4" stroke-linecap="round"/><path d="M33 49 C 30 52, 28 53, 26 54" fill="none" stroke="rgba(0,0,0,.08)" stroke-width="4" stroke-linecap="round"/></svg>`;
-    return `<svg class="heartEmpty" viewBox="0 0 64 60" xmlns="http://www.w3.org/2000/svg"><path d="M32 56 C 12 40, 4 30, 4 20 C 4 10, 12 4, 20 4 C 26 4, 30 7, 32 11 C 34 7, 38 4, 44 4 C 52 4, 60 10, 60 20 C 60 30, 52 40, 32 56 Z" fill="rgba(255,255,255,.12)" stroke="#9aa1aa" stroke-width="3"/></svg>`;
-  }
-  function updateHearts(){ heartsEl.innerHTML=''; for(let i=0;i<3;i++){ const slot=document.createElement('div'); slot.className='heartSlot'; const isFull=i<player.hearts; slot.innerHTML=heartSVG(isFull); heartsEl.appendChild(slot);} }
-  function heartPopEffect(){ const idx=Math.max(0,player.hearts-1); const slot=heartsEl.children[idx]; if(!slot) return; const pop=document.createElement('div'); pop.className='heartPop'; pop.innerHTML=heartSVG(true); slot.appendChild(pop);
-    setTimeout(()=>{ if(pop.parentNode) pop.parentNode.removeChild(pop); },700);
-  }
-
   // Game control
   function resetGame(){
-    obstacles.length=carrotItems.length=stars.length=hearts.length=floatTexts.length=0;
-    worldSpeed=BASE_SPEED; spawnInterval=SPAWN_BASE; spawnTimer=0; elapsed=0; score=0; carrotStreak=0; nextHeartAt=null;
-    player.y=groundY()-player.height; player.vy=0; player.onGround=true; player.dJumps=MAX_DOUBLE; player.hearts=3; player.starUntil=0; player.dmgInvUntil=0;
+    obstacles.length=carrotItems.length=stars.length=floatTexts.length=0;
+    worldSpeed=BASE_SPEED; spawnInterval=SPAWN_BASE; spawnTimer=0; elapsed=0; score=0; carrotStreak=0;
+    player.y=groundY()-player.height; player.vy=0; player.onGround=true; player.dJumps=MAX_DOUBLE; player.starUntil=0; player.dmgInvUntil=0;
     player.slideHeld=false; player.sliding=false; player.prevSliding=false; player.fainting=false; player.faintT=0; player.runPhase=0; transitioning=false;
-    updateHearts(); scoreEl.textContent='0'; updateMultUI(); settingsPanel.style.display='none'; pauseBadge.classList.remove('show');
+    scoreEl.textContent='0'; updateMultUI(); settingsPanel.style.display='none'; pauseBadge.classList.remove('show');
   }
   function startGame(){ resetGame(); titleCard.style.display='none'; gameOverCard.style.display='none'; gameState='running'; }
   startBtn.onclick=startGame; restartBtn.onclick=startGame;
@@ -188,7 +161,7 @@
   function rr(x,y,w,h,r,fill,stroke){ const R=Math.min(r,w/2,h/2); ctx.beginPath(); ctx.moveTo(x+R,y); ctx.arcTo(x+w,y,x+w,y+h,R); ctx.arcTo(x+w,y+h,x,y+h,R); ctx.arcTo(x,y+h,x,y,R); ctx.arcTo(x,y,x+w,y,R);
     if(fill){ ctx.fillStyle=fill; ctx.fill(); } if(stroke){ ctx.strokeStyle=stroke; ctx.lineWidth=2; ctx.stroke(); } }
 
-  // Background
+  // Background (buildings only; parallax skyline)
   const parallax=[]; function makeLayer(tileW,color,bYf,hF,step,winAlpha){ const off=document.createElement('canvas'); off.width=tileW; off.height=1000; const o=off.getContext('2d'); const h=off.height;
     const baseY=Math.floor(h*bYf), layerH=Math.floor(h*hF), cols=Math.floor(tileW/step);
     for(let i=0;i<cols;i++){ const x=i*step+10, bw=step-20, t=(i*37)%97, bh=Math.floor(layerH*(0.55+(t%10)/50));
@@ -206,8 +179,7 @@
     drawBackground.roadOffset=(drawBackground.roadOffset||0)-worldSpeed*.8*dt; const dashW=80,gap=40; ctx.fillStyle='#f7f7f7'; for(let x=(drawBackground.roadOffset%(dashW+gap)); x<w; x+=dashW+gap) ctx.fillRect(x,gy+8,dashW,6);
   }
 
-  // Huckey (v13b-ish)
-  function getPlayerHeight(){ return player.sliding ? SLIDE_H : STAND_H; }
+  // Huckey (simple v13b-ish body; no extra effects)
   function drawHuckey(dt){
     const gy=groundY();
     if(!player.onGround){ player.vy+=GRAVITY*dt; player.y+=player.vy*dt; if(player.y+getPlayerHeight()>=gy){ player.y=gy-getPlayerHeight(); player.vy=0; player.onGround=true; player.dJumps=MAX_DOUBLE; } }
@@ -215,45 +187,29 @@
     player.prevSliding=player.sliding; player.sliding=player.onGround&&player.slideHeld; if(player.sliding&&!player.prevSliding) sfx.slide();
     if(player.onGround&&!player.sliding&&!player.fainting) player.runPhase += dt*(0.8+worldSpeed/800);
 
-    const now=performance.now(), starActive=now<player.starUntil, blink=now<player.dmgInvUntil;
-    if(blink && !starActive){ if(Math.floor(now/100)%2===0) return; }
     const px=player.x(), ph=getPlayerHeight(), pw=player.width*(player.sliding?1.08:1.0);
-    const pink='#f8a9c9', outline='#d0709a', bodyColor= starActive? `hsl(${Math.floor((now/20)%360)},80%,70%)` : pink;
-    // body
-    rr(px+pw*.15,player.y+ph*.26,pw*.54,ph*.56,18,bodyColor,outline); rr(px+pw*.22,player.y+ph*.04,pw*.54,ph*.30,16,bodyColor,outline);
-    // ears (wider)
-    const earBob=(player.onGround&&!player.sliding)? Math.sin(player.runPhase*6)*(ph*.02):0;
-    rr(px+pw*.20,player.y+ph*.10+earBob,pw*.22,ph*.48,14,bodyColor,outline);
-    rr(px+pw*.66,player.y+ph*.10+earBob,pw*.22,ph*.48,14,bodyColor,outline);
+    const pink='#f8a9c9', outline='#d0709a';
+    rr(px+pw*.15,player.y+ph*.26,pw*.54,ph*.56,18,pink,outline); rr(px+pw*.22,player.y+ph*.04,pw*.54,ph*.30,16,pink,outline);
+    rr(px+pw*.20,player.y+ph*.10,pw*.22,ph*.48,14,pink,outline); rr(px+pw*.66,player.y+ph*.10,pw*.22,ph*.48,14,pink,outline);
     // face
     ctx.fillStyle='#333'; ctx.beginPath(); ctx.arc(px+pw*.52,player.y+ph*.14,3.6,0,Math.PI*2); ctx.fill(); ctx.beginPath(); ctx.arc(px+pw*.64,player.y+ph*.14,3.6,0,Math.PI*2); ctx.fill();
     ctx.fillStyle='#d08f8c'; ctx.beginPath(); ctx.arc(px+pw*.58,player.y+ph*.20,5.2,0,Math.PI*2); ctx.fill();
-    // limbs & tail
-    rr(px+pw*.24,player.y+ph*.46,pw*.14,ph*.10,10,bodyColor,outline); rr(px+pw*.62,player.y+ph*.46,pw*.14,ph*.10,10,bodyColor,outline);
-    rr(px+pw*.40,player.y+ph*.76,pw*.18,ph*.16,12,bodyColor,outline); rr(px+pw*.58,player.y+ph*.76,pw*.18,ph*.16,12,bodyColor,outline);
-    rr(px+pw*.06,player.y+ph*.60,pw*.12,ph*.12,10,'#ffd1e4',outline);
+    // limbs
+    rr(px+pw*.24,player.y+ph*.46,pw*.14,ph*.10,10,pink,outline); rr(px+pw*.62,player.y+ph*.46,pw*.14,ph*.10,10,pink,outline);
+    rr(px+pw*.40,player.y+ph*.76,pw*.18,ph*.16,12,pink,outline); rr(px+pw*.58,player.y+ph*.76,pw*.18,ph*.16,12,pink,outline);
   }
+  function getPlayerHeight(){ return player.sliding ? SLIDE_H : STAND_H; }
 
-  // Obstacles (v13b-like + new billboard frame)
+  // Obstacles (v13b-like placeholders)
   function drawObstacle(o){
     if(o.type==='block'){ rr(o.x,o.y,o.w,o.h,10,'#5e7fd8','#2c49a4'); }
     if(o.type==='car'){ rr(o.x,o.y,o.w,o.h,10,'#6aa5ff','#2b5bb8'); }
     if(o.type==='van'){ rr(o.x,o.y,o.w,o.h,10,'#7eafff','#2b5bb8'); }
     if(o.type==='truck'){ rr(o.x,o.y,o.w,o.h,10,'#6aa5ff','#2b5bb8'); }
     if(o.type==='beam'){ rr(o.x,o.y,o.w,o.h,8,'#ffd34f','#caa12e'); }
-    if(o.type==='billboard'){
-      // top panel
-      rr(o.x,o.y,o.w,o.hTop,10,'#ff9a3c','#c66f20');
-      // posts
-      rr(o.x, o.y+o.hTop, 16, o.hPost, 6, '#8a7cff','#5a49cc');
-      rr(o.x+o.w-16, o.y+o.hTop, 16, o.hPost, 6, '#8a7cff','#5a49cc');
-      // subtle shadow under the gap
-      const gy = o.y+o.hTop+o.hPost;
-      ctx.fillStyle='rgba(0,0,0,.08)'; ctx.fillRect(o.x+20, gy-6, o.w-40, 6);
-    }
   }
 
-  // Items
+  // Items (carrots & stars only)
   function drawCarrot(x,y,w,h){
     ctx.beginPath(); ctx.moveTo(x+w*.15,y); ctx.lineTo(x+w*.85,y); ctx.quadraticCurveTo(x+w*.65,y+h*.60,x+w*.50,y+h); ctx.quadraticCurveTo(x+w*.35,y+h*.60,x+w*.15,y); ctx.closePath();
     ctx.fillStyle='#ff7f50'; ctx.fill(); ctx.lineWidth=2; ctx.strokeStyle='#d2653d'; ctx.stroke();
@@ -263,11 +219,10 @@
     const cx=x+w/2, cy=y+h/2, r=Math.min(w,h)/2; ctx.fillStyle='#ffd34f'; ctx.strokeStyle='#caa12e'; ctx.lineWidth=2; ctx.beginPath();
     for(let i=0;i<10;i++){ const ang=Math.PI/5*i-Math.PI/2, rr=(i%2===0)?r:r*.45; const px=cx+Math.cos(ang)*rr, py=cy+Math.sin(ang)*rr; if(i===0) ctx.moveTo(px,py); else ctx.lineTo(px,py); } ctx.closePath(); ctx.fill(); ctx.stroke();
   }
-  function drawHeartItem(x,y,w,h){ rr(x,y,w,h,10,'#ff6aa5','#c22668'); ctx.fillStyle='rgba(255,255,255,.6)'; ctx.fillRect(x+6,y+6,w-12,4); }
 
-  // Spawning
+  // Spawning (v13b style)
   function spawnObstacleSet(){
-    const gY=groundY(); const w=canvas.width; const pool=['block','car','van','truck','beam','billboard'];
+    const gY=groundY(); const w=canvas.width; const pool=['block','car','van','truck','beam'];
     const type=pool[(Math.random()*pool.length)|0];
     const add=o=>obstacles.push(o);
     if(type==='block'){ add({type:'block',x:w+40,y:gY-50,w:80,h:48}); }
@@ -275,19 +230,14 @@
     if(type==='van'){ add({type:'van',x:w+40,y:gY-64,w:140,h:60}); }
     if(type==='truck'){ add({type:'truck',x:w+40,y:gY-74,w:200,h:70}); }
     if(type==='beam'){ const spanW=200+Math.random()*120, clearance=SLIDE_H+6, beamY=gY-clearance; add({type:'beam',x:w+40,y:beamY-18,w:spanW,h:18,slideOnly:true}); }
-    if(type==='billboard'){ const gapH=SLIDE_H-4, topH=40, postH= (gY-(gY-gapH-topH))-topH; add({type:'billboard',x:w+40,y:gY-gapH-topH-postH,w:220+Math.random()*120,hTop:topH,hPost:postH,slideOnly:true}); }
+
     // Carrots
     if(type==='block'||type==='car'||type==='van'||type==='truck'){ for(let i=0;i<3;i++) carrotItems.push({x:w+40+i*40,y:gY-140-i*10,w:28,h:50}); }
-    if(type==='beam' || type==='billboard'){ for(let i=0;i<3;i++) carrotItems.push({x:w+40+200+i*34,y:gY-100-(i%2)*18,w:28,h:46}); }
+    if(type==='beam'){ for(let i=0;i<3;i++) carrotItems.push({x:w+40+200+i*34,y:gY-100-(i%2)*18,w:28,h:46}); }
 
-    // Stars — occasional, avoid overlap with hearts by staggering timing
-    if(Math.random()<STAR_CHANCE && stars.length<2){ const y=gY-(160+Math.random()*100), x=w+260; stars.push({x,y,w:44,h:44}); }
+    // Stars
+    if(Math.random()<0.06 && stars.length<2){ const y=gY-(160+Math.random()*100), x=w+260; stars.push({x,y,w:44,h:44}); }
 
-    // Hearts — time-gated
-    if(player.hearts<3){
-      if(nextHeartAt===null) scheduleHeart(elapsed);
-      if(elapsed>=nextHeartAt && hearts.length<1){ const y=gY-(150+Math.random()*80), x=w+260; hearts.push({x,y,w:40,h:38}); scheduleHeart(elapsed); }
-    }
     // occasional double combo
     if(Math.random()<0.12){ const dx=120+Math.random()*80; add({type:'block',x:w+40+dx,y:gY-50,w:80,h:48}); }
   }
@@ -313,16 +263,16 @@
       let collided=false; const pbb=getBB();
       if(o.slideOnly){ const overlapX=pbb.x<o.x+o.w && pbb.x+pbb.w>o.x; if(overlapX && !player.sliding){ const withinY=pbb.y<o.y+o.h && pbb.y+pbb.h>o.y; if(withinY) collided=true; } }
       else { if(aabb(pbb,o)) collided=true; }
-      if(collided){ const now=performance.now(); if(now<player.starUntil){ addScore(15*currentMult(),pbb.x+pbb.w/2,pbb.y,'#5bd3ff',1.0); obstacles.splice(i,1); continue; }
+      if(collided){ const now=performance.now(); if(now<player.starUntil){ addScore(15,pbb.x+pbb.w/2,pbb.y,'#5bd3ff',1.0); obstacles.splice(i,1); continue; }
                     if(now>=player.dmgInvUntil){ playerHit(); } }
       if(o.x+o.w<-140) obstacles.splice(i,1);
     }
     // Carrots
     for(let i=carrotItems.length-1;i>=0;i--){ const c=carrotItems[i]; c.x -= worldSpeed*dt; drawCarrot(c.x,c.y,c.w,c.h); if(aabb(getBB(),c)){ carrotItems.splice(i,1); const before=baseMult(); carrotStreak++; const after=baseMult(); addScore(25*currentMult(),c.x+c.w/2,c.y,'#ff8c42',1.0); updateMultUI(); } else if(c.x+c.w<-120) carrotItems.splice(i,1); }
     // Stars
-    for(let i=stars.length-1;i>=0;i--){ const s=stars[i]; s.x -= worldSpeed*dt; drawStar(s.x,s.y,s.w,s.h); if(aabb(getBB(),s)){ stars.splice(i,1); player.starUntil=performance.now()+STAR_DURATION; addScore(50,s.x+s.w/2,s.y,'#ffd34f',1.1); sfx.star(); updateMultUI(); } else if(s.x+s.w<-120) stars.splice(i,1); }
-    // Hearts
-    for(let i=hearts.length-1;i>=0;i--){ const h=hearts[i]; h.x -= worldSpeed*dt; drawHeartItem(h.x,h.y,h.w,h.h); if(aabb(getBB(),h)){ hearts.splice(i,1); if(player.hearts<3){ player.hearts++; updateHearts(); heartPopEffect(); sfx.heart(); cooldownHeart(elapsed); } } else if(h.x+h.w<-120) hearts.splice(i,1); }
+    for(let i=stars.length-1;i>=0;i--){ const s=stars[i]; s.x -= worldSpeed*dt; drawStar(s.x,s.y,s.w,s.h); if(aabb(getBB(),s)){ stars.splice(i,1); player.starUntil=performance.now()+STAR_DURATION; addScore(50,s.x+s.w/2,s.y,'#ffd34f',1.1); sfx.star(); } else if(s.x+s.w<-120) stars.splice(i,1); }
+    // Damage flicker & game over
+    if(player.dmgInvUntil>0 && performance.now()<player.dmgInvUntil){ /* flicker handled in draw if desired */ }
   }
 
   // Score text
@@ -331,18 +281,20 @@
       ctx.save(); ctx.globalAlpha=a*.9; ctx.font=`${Math.floor(18*f.scale)}px Arial`; ctx.textAlign='center'; ctx.textBaseline='bottom'; ctx.fillStyle=f.color; ctx.fillText(f.text,f.x,f.y-f.t*20); ctx.restore(); } }
   function addScore(pts,x=null,y=null,color='#333',scale=1){ score += pts; if(x!=null && y!=null) spawnText(x,y,(pts>0?'+':'')+Math.floor(pts),color,scale); }
 
-  // Damage & game over
-  function playerHit(){ const now=performance.now(); if(now<player.starUntil||now<player.dmgInvUntil||player.fainting||transitioning) return; heartPopEffect(); player.hearts--; updateHearts();
-    carrotStreak=0; updateMultUI(); player.dmgInvUntil=now+DMG_INV; sfx.hit();
-    if(player.hearts<=0){ transitioning=true; if(gameState==='paused') setPause(false); player.fainting=true;
-      setTimeout(()=>{ gameState='over'; finalScoreEl.textContent=Math.floor(score).toString(); gameOverCard.style.display='block'; transitioning=false; },800); } }
+  // Damage & game over (v13b-like: lose on single hit? here we use brief invincibility then immediate game over for simplicity)
+  function playerHit(){ const now=performance.now(); if(now<player.starUntil||now<player.dmgInvUntil||player.fainting||transitioning) return;
+    player.dmgInvUntil=now+DMG_INV;
+    // v13b had hearts earlier in our thread; in strict revert we'll do single-lives game over:
+    transitioning=true;
+    setTimeout(()=>{ gameState='over'; finalScoreEl.textContent=Math.floor(score).toString(); gameOverCard.style.display='block'; transitioning=false; },600);
+  }
 
   // Pause
   function setPause(v){ if(v){ if(gameState==='running'){ gameState='paused'; pauseBadge.classList.add('show'); pauseBadge.textContent=isMobile?'Paused':'Paused — Press P to resume'; } }
                         else{ if(gameState==='paused'){ gameState='running'; pauseBadge.classList.remove('show'); } } }
 
   // Init
-  player.y=groundY()-player.height; updateHearts(); updateMultUI();
+  function getPlayerHeight(){ return player.sliding ? SLIDE_H : STAND_H; }
 })();</script>
 </body>
 </html>
